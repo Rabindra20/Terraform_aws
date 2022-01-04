@@ -13,6 +13,8 @@ provider "aws" {
   region     = "us-east-1"
   access_key = ""
   secret_key = ""
+  //for sso role in aws
+  token      = ""
 }
 resource "aws_s3_bucket" "b" {
   bucket = "rabindra"
