@@ -4,7 +4,6 @@ provider "aws" {
   secret_key = ""
   # for sso role in aws
   token = ""}
-
 module "vpc" {
   source = "./modules/vpc"
 

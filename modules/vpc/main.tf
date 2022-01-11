@@ -238,7 +238,7 @@ resource "aws_network_acl" "pub_nacl" {
     cidr_block = "0.0.0.0/0"
   }
 
-  tags {
+  tags = {
     Name = "pub_nacl"
   }
 }

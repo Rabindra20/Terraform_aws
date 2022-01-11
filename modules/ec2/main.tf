@@ -44,7 +44,7 @@ resource "aws_instance" "web_server" {
   key_name = "app-key"
   # key_name = "${aws_key_pair.web_server_key.key_name}"
   # user_data = "${file("${var.user_data_path}")}"
-  # vpc_security_group_ids = ["${var.web_server_sg_id}"]
+  vpc_security_group_ids = ["${var.web_server_sg_id}"]
 
   tags = {
     Name = "Web Server"
