@@ -14,3 +14,6 @@ terraform validate
 ```
 terraform plan
 ```
+```
+terraform destroy --target rousourcename or module name
+```

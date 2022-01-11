@@ -1,132 +1,55 @@
-# terraform {
-#   required_providers {
-#     aws = {
-#       source  = "hashicorp/aws"
-#       version = "~> 3.0"
-#     }
-#   }
-#   required_version = ">= 0.14.9"
-# }
-
-# Configure the AWS Provider
 provider "aws" {
   region     = "us-east-1"
   access_key = ""
   secret_key = ""
   # for sso role in aws
-  token = ""
-}
-# resource "aws_s3_bucket" "b" {
-#   bucket = "rabindra"
-#   acl    = "private"
+  token = ""}
 
-#   tags = {
-#     Name = "My bucket"
-#   }
+module "vpc" {
+  source = "./modules/vpc"
+
+  aws_region = "${var.aws_region}"
+}
+
+module "securitygrp" {
+  source = "./modules/securitygrp"
+
+  vpc_id = "${module.vpc.out_vpc_id}"
+  aws_region = "${var.aws_region}"
+  vpc_cidr_block = "${module.vpc.out_vpc_cidr_block}"
+}
+
+module "ec2" {
+  source = "./modules/ec2"
+
+  # vpc_id = "${module.vpc.out_vpc_id}"
+  aws_region = "${var.aws_region}"
+  # key_pair_path = "${var.key_pair_path}"
+  instance_type = "${var.instance_type}"
+  pub_subnet_1_id = "${module.vpc.out_pub_subnet_1_id}"
+  #  iam_instance_profile_name = "${module.iam.out_iam_instance_profile_name}"
+  #  user_data_path = "${var.user_data_path}"
+  web_server_sg_id = "${module.securitygrp.out_web_server_sg_id}"
+}
+# module "RDS" {
+#   source = "./modules/RDS" 
+
+#   db_engine = "${var.db_engine}"
+#   engine_version = "${var.engine_version}"
+#   db_instance_class = "${var.db_instance_class}"
+#   db_identifier = "${var.db_identifier}"
+#   db_name = "${var.db_name}"
+#   db_username = "${var.db_username}"
+#   db_password = "${var.db_password}"
+#   db_skip_final_snapshot = "${var.db_skip_final_snapshot}"
+#   db_backup_retention_period = "${var.db_backup_retention_period}"
+#   # rds_subnet_name = "${module.vpc.out_rds_subnet_name}"
+#   rds_sg_id = "${module.security-group.out_rds_sg_id}"
+# #   lb_sg_id = "${module.security-group.out_lb_sg_id}"
+# #   pub_subnet_2_id = "${module.vpc.out_pub_subnet_2_id}"
+# #   asg_max_size = "${var.asg_max_size}"
+# #   asg_min_size = "${var.asg_min_size}"
+# #   asg_health_check_gc = "${var.asg_health_check_gc}"
+# #   asg_health_check_type = "${var.asg_health_check_type}"
+# #   asg_desired_size = "${var.asg_desired_size}"
 # }
-resource "aws_vpc" "myvpc" {
-  cidr_block = "10.0.0.0/16"
-
-  tags = {
-    Name = "rab"
-  }
-}
-
-resource "aws_internet_gateway" "igw" {
-  vpc_id = aws_vpc.myvpc.id
-
-  tags = {
-    Name = "rab"
-  }
-}
-
-resource "aws_subnet" "mysub1" {
-  vpc_id     = aws_vpc.myvpc.id
-  cidr_block = "10.0.1.0/24"
-
-  tags = {
-    Name = "subnet1"
-  }
-}
-resource "aws_subnet" "mysub2" {
-  vpc_id     = aws_vpc.myvpc.id
-  cidr_block = "10.0.11.0/24"
-
-  tags = {
-    Name = "subnet2"
-  }
-}
-
-resource "aws_route_table" "rt" {
-  vpc_id = aws_vpc.myvpc.id
-
-  route = []
-
-  tags = {
-    Name = "rt"
-  }
-}
-
-resource "aws_route" "r" {
-  route_table_id         = aws_route_table.rt.id
-  destination_cidr_block = "0.0.0.0/0"
-  gateway_id             = aws_internet_gateway.igw.id
-  depends_on             = [aws_route_table.rt]
-}
-
-
-resource "aws_route_table_association" "a1" {
-  subnet_id      = aws_subnet.mysub1.id
-  route_table_id = aws_route_table.rt.id
-}
-
-resource "aws_route_table_association" "a2" {
-  subnet_id      = aws_subnet.mysub2.id
-  route_table_id = aws_route_table.rt.id
-}
-
-resource "aws_security_group" "sg" {
-  name        = "allow all traffic"
-  description = "Allow all inbound traffic"
-  vpc_id      = aws_vpc.myvpc.id
-
-  ingress {
-    description      = "all traffic"
-    from_port        = 0    #All port
-    to_port          = 0    #All port
-    protocol         = "-1" #All traffic
-    cidr_blocks      = ["0.0.0.0/0"]
-    ipv6_cidr_blocks = null
-  }
-
-  egress {
-    from_port        = 0
-    to_port          = 0
-    protocol         = "-1"
-    cidr_blocks      = ["0.0.0.0/0"]
-    ipv6_cidr_blocks = ["::/0"]
-  }
-
-  tags = {
-    Name = "All traffic"
-  }
-}
-resource "aws_instance" "ec2-a" {
-  ami           = "ami-0ed9277fb7eb570c9"
-  instance_type = "t2.micro"
-  subnet_id     = aws_subnet.mysub1.id
-
-  tags = {
-    Name = "rab-a"
-  }
-}
-
-resource "aws_instance" "ec2-b" {
-  ami           = "ami-0ed9277fb7eb570c9"
-  instance_type = "t2.micro"
-  subnet_id     = aws_subnet.mysub2.id
-
-  tags = {
-    Name = "rab-b"
-  }
-}
