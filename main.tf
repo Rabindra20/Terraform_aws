@@ -3,7 +3,8 @@ provider "aws" {
   access_key = ""
   secret_key = ""
   # for sso role in aws
-  token = ""}
+  token = ""
+}
 module "vpc" {
   source = "./modules/vpc"
 
@@ -42,13 +43,13 @@ module "ec2" {
 #   db_password = "${var.db_password}"
 #   db_skip_final_snapshot = "${var.db_skip_final_snapshot}"
 #   db_backup_retention_period = "${var.db_backup_retention_period}"
-#   # rds_subnet_name = "${module.vpc.out_rds_subnet_name}"
+#   rds_subnet_name = "${module.vpc.out_rds_subnet_name}"
 #   rds_sg_id = "${module.security-group.out_rds_sg_id}"
-# #   lb_sg_id = "${module.security-group.out_lb_sg_id}"
-# #   pub_subnet_2_id = "${module.vpc.out_pub_subnet_2_id}"
-# #   asg_max_size = "${var.asg_max_size}"
-# #   asg_min_size = "${var.asg_min_size}"
-# #   asg_health_check_gc = "${var.asg_health_check_gc}"
-# #   asg_health_check_type = "${var.asg_health_check_type}"
-# #   asg_desired_size = "${var.asg_desired_size}"
+#   lb_sg_id = "${module.security-group.out_lb_sg_id}"
+#   pub_subnet_2_id = "${module.vpc.out_pub_subnet_2_id}"
+#   asg_max_size = "${var.asg_max_size}"
+#   asg_min_size = "${var.asg_min_size}"
+#   asg_health_check_gc = "${var.asg_health_check_gc}"
+#   asg_health_check_type = "${var.asg_health_check_type}"
+#   asg_desired_size = "${var.asg_desired_size}"
 # }

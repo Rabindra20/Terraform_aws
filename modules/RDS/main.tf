@@ -8,7 +8,7 @@ resource "aws_db_instance" "rds_instance" {
   name = "${var.db_name}"
   username = "${var.db_username}"
   password = "${var.db_password}"
-  availability_zone = "${var.aws_region}a"
+  availability_zone = "${var.aws_region}"
   vpc_security_group_ids = ["${var.rds_sg_id}"]
   skip_final_snapshot = "${var.db_skip_final_snapshot}"
   backup_retention_period = "${var.db_backup_retention_period}"

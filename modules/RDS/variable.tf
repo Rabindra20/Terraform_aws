@@ -8,3 +8,6 @@ variable "db_username" {}
 variable "db_password" {}
 variable "db_skip_final_snapshot" {}
 variable "db_backup_retention_period" {}
+variable "rds_sg_id" {}
+variable "aws_region" {}
+variable "rds_subnet_name" {}
