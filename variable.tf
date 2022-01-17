@@ -1,3 +1,6 @@
+variable "access_key" {}
+variable "secret_key" {}
+variable "token" {} 
 variable "aws_region" {
   default = "us-east-1"  #Select appropriate region from the above list
 }
