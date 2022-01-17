@@ -43,3 +43,17 @@ variable "instance_type" {
 # variable "db_backup_retention_period" {
 #   default = "1" #Number of days you want to preserve automated backups. Maximum value is 35
 # }
+
+variable "my_s3_bucket" {
+  type = string
+  default = "rab"
+}
+
+## Create Variable for S3 Bucket Tags
+variable "my_s3_tags" {
+  type = map(string)
+  default = {
+    Terraform = "true"
+    Environment = "dev"
+  }
+}

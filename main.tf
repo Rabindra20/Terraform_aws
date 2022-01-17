@@ -4,33 +4,33 @@
 #   secret_key = ""
 #   # for sso role in aws
 #   token = ""
-#}
-module "vpc" {
-  source = "./modules/vpc"
+# }
+# module "vpc" {
+#   source = "./modules/vpc"
 
-  aws_region = "${var.aws_region}"
-}
+#   aws_region = "${var.aws_region}"
+# }
 
-module "securitygrp" {
-  source = "./modules/securitygrp"
+# module "securitygrp" {
+#   source = "./modules/securitygrp"
 
-  vpc_id = "${module.vpc.out_vpc_id}"
-  aws_region = "${var.aws_region}"
-  vpc_cidr_block = "${module.vpc.out_vpc_cidr_block}"
-}
+#   vpc_id = "${module.vpc.out_vpc_id}"
+#   aws_region = "${var.aws_region}"
+#   vpc_cidr_block = "${module.vpc.out_vpc_cidr_block}"
+# }
 
-module "ec2" {
-  source = "./modules/ec2"
+# module "ec2" {
+#   source = "./modules/ec2"
 
-  # vpc_id = "${module.vpc.out_vpc_id}"
-  aws_region = "${var.aws_region}"
-  # key_pair_path = "${var.key_pair_path}"
-  instance_type = "${var.instance_type}"
-  pub_subnet_1_id = "${module.vpc.out_pub_subnet_1_id}"
-  #  iam_instance_profile_name = "${module.iam.out_iam_instance_profile_name}"
-  #  user_data_path = "${var.user_data_path}"
-  web_server_sg_id = "${module.securitygrp.out_web_server_sg_id}"
-}
+#   # vpc_id = "${module.vpc.out_vpc_id}"
+#   aws_region = "${var.aws_region}"
+#   # key_pair_path = "${var.key_pair_path}"
+#   instance_type = "${var.instance_type}"
+#   pub_subnet_1_id = "${module.vpc.out_pub_subnet_1_id}"
+#   #  iam_instance_profile_name = "${module.iam.out_iam_instance_profile_name}"
+#   #  user_data_path = "${var.user_data_path}"
+#   web_server_sg_id = "${module.securitygrp.out_web_server_sg_id}"
+# }
 # module "RDS" {
 #   source = "./modules/RDS" 
 
@@ -53,3 +53,20 @@ module "ec2" {
 #   asg_health_check_type = "${var.asg_health_check_type}"
 #   asg_desired_size = "${var.asg_desired_size}"
 # }
+module "s3" {
+  #path to reusable code of modules
+  source = "./modules/s3"
+  bucket_name = var.my_s3_bucket
+  tags = var.my_s3_tags
+}
+# Upload an object
+resource "aws_s3_bucket_object" "object" {
+
+# If you want to upload all the files of a directory, then you need to use 'for_each' loop
+  for_each = fileset("F:/Git/6_aws_cloud-amit-sparsha-aashishgautam/serverless-rabindra/5.CI/build/", "**")
+  bucket = module.s3.name
+  key    = each.value
+  acl    = "public-read" 
+  source = "F:/Git/6_aws_cloud-amit-sparsha-aashishgautam/serverless-rabindra/5.CI/build/${each.value}"
+  etag = filemd5("F:/Git/6_aws_cloud-amit-sparsha-aashishgautam/serverless-rabindra/5.CI/build/${each.value}")
+}
