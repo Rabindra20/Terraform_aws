@@ -51,6 +51,7 @@ variable "my_s3_bucket" {
 
 ## Create Variable for S3 Bucket Tags
 variable "my_s3_tags" {
+  # for_each loop map or set is used
   type = map(string)
   default = {
     Terraform = "true"

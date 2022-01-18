@@ -49,4 +49,26 @@ resource "aws_instance" "web_server" {
   tags = {
     Name = "Web Server"
   }
+    # provisioner "file" {
+#     source      = "file.txt"
+#     destination = "file.txt"
+# }
+##local-exec
+# provisioner "local-exec" {
+#     command = "touch hello.txt"
+# }
+#remote
+provisioner "remote-exec" {
+    inline = [
+      "touch hello.txt",
+      "echo helloworld remote provisioner >> hello.txt",
+    ]
+}
+connection {
+      type        = "ssh"
+      host        = self.public_ip
+      private_key = file("app-key.pem")
+      user        = "ec2-user"
+      timeout     = "4m"
+   }
 }
