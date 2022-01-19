@@ -73,3 +73,8 @@ module "ec2" {
 #   source = "F:/Git/6_aws_cloud-amit-sparsha-aashishgautam/serverless-rabindra/5.CI/build/${each.value}"
 #   etag = filemd5("F:/Git/6_aws_cloud-amit-sparsha-aashishgautam/serverless-rabindra/5.CI/build/${each.value}")
 # }
+
+output "Nice_try" {
+  value = "Keep it up"
+  sensitive = false
+}

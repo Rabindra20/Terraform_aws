@@ -36,6 +36,10 @@ resource "local_file" "app-key" {
     filename = "app-key.pem"
 }
 
+locals {
+  # staging_env = "staging"
+  instance_name = "${terraform.workspace}-instance" 
+}
 #================ Instance ================
 resource "aws_instance" "web_server" {
   ami = "${data.aws_ami.latest_amazon_ami.id}"
@@ -47,7 +51,9 @@ resource "aws_instance" "web_server" {
   vpc_security_group_ids = ["${var.web_server_sg_id}"]
 
   tags = {
-    Name = "Web Server"
+    # Name = "Web Server"
+    # Name = "${local.staging_env}-ec2"
+    Name = local.instance_name
   }
     # provisioner "file" {
 #     source      = "file.txt"

@@ -209,17 +209,7 @@ resource "aws_network_acl" "pub_nacl" {
   #   protocol = "tcp"
   #   cidr_block = "0.0.0.0/0"  #You must restrict this to your own IP address
   # }
-  #Ephemeral Ports
-  ingress {
-    rule_no = 400
-    action = "allow"
-    from_port = 1024
-    to_port = 65535
-    protocol = "tcp"
-    cidr_block = "0.0.0.0/0"
-  }
-
-    dynamic "ingress" {
+      dynamic "ingress" {
       for_each = local.ingress_rules
 
       content {
@@ -232,6 +222,17 @@ resource "aws_network_acl" "pub_nacl" {
          cidr_block = "0.0.0.0/0"
       }
    } 
+  #Ephemeral Ports
+  ingress {
+    rule_no = 400
+    action = "allow"
+    from_port = 1024
+    to_port = 65535
+    protocol = "tcp"
+    cidr_block = "0.0.0.0/0"
+  }
+
+
 
   #HTTP Port
   egress {

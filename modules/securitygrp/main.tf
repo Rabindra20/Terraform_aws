@@ -26,6 +26,7 @@ resource "aws_security_group" "web_server_sg" {
          to_port     = ingress.value.port
          protocol    = "tcp"
          cidr_blocks = ["0.0.0.0/0"]
+         security_groups = ["${aws_security_group.lb_sg.id}"]
       }
    }
   # ingress {
