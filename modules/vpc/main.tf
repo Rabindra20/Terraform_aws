@@ -1,3 +1,21 @@
+#Dynamic block
+locals {
+   ingress_rules = [{
+      rule        = 100
+      port        = 80
+      description = "Ingress rules for port 80"
+   },
+   {
+     rule        = 200
+      port        = 22
+      description = "Ingree rules for port 22"
+   },
+   {
+     rule        = 300
+      port        = 443
+      description = "Ingree rules for port 433"
+   }]
+}
 #================ VPC ================
 resource "aws_vpc" "vpc" {
   cidr_block = "10.0.0.0/16"  #You can change the CIDR block as per required
@@ -164,33 +182,33 @@ resource "aws_network_acl" "pub_nacl" {
   vpc_id = "${aws_vpc.vpc.id}"
   subnet_ids = ["${aws_subnet.pub_subnet_1.id}", "${aws_subnet.pub_subnet_2.id}"]
 
-  #HTTP Port
-  ingress {
-    rule_no = 100
-    action = "allow"
-    from_port = 80
-    to_port = 80
-    protocol = "tcp"
-    cidr_block = "0.0.0.0/0"
-  }
-  #HTTPS Port
-  ingress {
-    rule_no = 200
-    action = "allow"
-    from_port = 443
-    to_port = 443
-    protocol = "tcp"
-    cidr_block = "0.0.0.0/0"
-  }
-  #SSH Port
-  ingress {
-    rule_no = 300
-    action = "allow"
-    from_port = 22
-    to_port = 22
-    protocol = "tcp"
-    cidr_block = "0.0.0.0/0"  #You must restrict this to your own IP address
-  }
+  # #HTTP Port
+  # ingress {
+  #   rule_no = 100
+  #   action = "allow"
+  #   from_port = 80
+  #   to_port = 80
+  #   protocol = "tcp"
+  #   cidr_block = "0.0.0.0/0"
+  # }
+  # #HTTPS Port
+  # ingress {
+  #   rule_no = 200
+  #   action = "allow"
+  #   from_port = 443
+  #   to_port = 443
+  #   protocol = "tcp"
+  #   cidr_block = "0.0.0.0/0"
+  # }
+  # #SSH Port
+  # ingress {
+  #   rule_no = 300
+  #   action = "allow"
+  #   from_port = 22
+  #   to_port = 22
+  #   protocol = "tcp"
+  #   cidr_block = "0.0.0.0/0"  #You must restrict this to your own IP address
+  # }
   #Ephemeral Ports
   ingress {
     rule_no = 400
@@ -200,6 +218,20 @@ resource "aws_network_acl" "pub_nacl" {
     protocol = "tcp"
     cidr_block = "0.0.0.0/0"
   }
+
+    dynamic "ingress" {
+      for_each = local.ingress_rules
+
+      content {
+         rule_no = ingress.value.rule
+         action = "allow"
+        #  description = ingress.value.description
+         from_port   = ingress.value.port
+         to_port     = ingress.value.port
+         protocol    = "tcp"
+         cidr_block = "0.0.0.0/0"
+      }
+   } 
 
   #HTTP Port
   egress {

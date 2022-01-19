@@ -8,7 +8,7 @@
 module "vpc" {
   source = "./modules/vpc"
 
-  aws_region = "${var.aws_region}"
+  # aws_region = "${var.aws_region}"
 }
 
 module "securitygrp" {
@@ -53,20 +53,23 @@ module "ec2" {
 #   asg_health_check_type = "${var.asg_health_check_type}"
 #   asg_desired_size = "${var.asg_desired_size}"
 # }
-module "s3" {
-  #path to reusable code of modules
-  source = "./modules/s3"
-  bucket_name = var.my_s3_bucket
-  tags = var.my_s3_tags
-}
-# Upload an object
-resource "aws_s3_bucket_object" "object" {
 
-# If you want to upload all the files of a directory, then you need to use 'for_each' loop
-  for_each = fileset("F:/Git/6_aws_cloud-amit-sparsha-aashishgautam/serverless-rabindra/5.CI/build/", "**")
-  bucket = module.s3.name
-  key    = each.value
-  acl    = "public-read" 
-  source = "F:/Git/6_aws_cloud-amit-sparsha-aashishgautam/serverless-rabindra/5.CI/build/${each.value}"
-  etag = filemd5("F:/Git/6_aws_cloud-amit-sparsha-aashishgautam/serverless-rabindra/5.CI/build/${each.value}")
-}
+##s3 bucket
+
+# module "s3" {
+#   #path to reusable code of modules
+#   source = "./modules/s3"
+#   bucket_name = var.my_s3_bucket
+#   tags = var.my_s3_tags
+# }
+# # Upload an object
+# resource "aws_s3_bucket_object" "object" {
+
+# # If you want to upload all the files of a directory, then you need to use 'for_each' loop
+#   for_each = fileset("F:/Git/6_aws_cloud-amit-sparsha-aashishgautam/serverless-rabindra/5.CI/build/", "**")
+#   bucket = module.s3.name
+#   key    = each.value
+#   acl    = "public-read" 
+#   source = "F:/Git/6_aws_cloud-amit-sparsha-aashishgautam/serverless-rabindra/5.CI/build/${each.value}"
+#   etag = filemd5("F:/Git/6_aws_cloud-amit-sparsha-aashishgautam/serverless-rabindra/5.CI/build/${each.value}")
+# }
