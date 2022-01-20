@@ -54,3 +54,7 @@ To select work space
 ```
 terraform workspace select workspacename  
 ```
+To pull terraform state file
+```
+terraform state pull 
+```

@@ -5,6 +5,34 @@
 #   # for sso role in aws
 #   token = ""
 # }
+#local
+# data "terraform_remote_state" "local_state" {
+#   backend = "local"
+
+#   config = {
+#     path = "terraform.tfstate"
+#   }
+# }
+#remote state
+terraform {
+  backend "s3" {
+    bucket ="rab"
+    key ="key/terraform.tfstate"
+    encrypt = true
+    region = "us-east-1"
+  }
+}
+
+# data "terraform_remote_state" "remote_state" {
+#   backend = "remote"
+
+#   config = {
+#     organization = "lft"
+#     workspaces = {
+#       name = "test"
+#     }
+#   }
+# }
 module "vpc" {
   source = "./modules/vpc"
 
