@@ -44,7 +44,7 @@ locals {
 resource "aws_instance" "web_server" {
   ami = "${data.aws_ami.latest_amazon_ami.id}"
   instance_type = "${var.instance_type}"
-  subnet_id = "${var.pub_subnet_1_id}"
+  subnet_id = "${var.pub_subnet_id}"
   key_name = "app-key"
   # key_name = "${aws_key_pair.web_server_key.key_name}"
   # user_data = "${file("${var.user_data_path}")}"

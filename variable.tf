@@ -10,6 +10,11 @@ variable "aws_profile" {
 variable "instance_type" {
   default = "t2.micro"  #Provide appropriate instance type supported by the region
 }
+# variable "vpc_cidr" {}
+# variable "environment" {}
+# variable "public_subnets_cidr" {}
+# variable "private_subnets_cidr" {}
+# variable "instance_tenancy" {}
 # variable "key_pair_path" {
 #   default = "public-key"  #Must generate your own key pair and use them to SSH
 # }

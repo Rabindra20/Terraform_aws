@@ -5,7 +5,7 @@
 #   # for sso role in aws
 #   token = ""
 # }
-#local
+##local
 # data "terraform_remote_state" "local_state" {
 #   backend = "local"
 
@@ -13,15 +13,15 @@
 #     path = "terraform.tfstate"
 #   }
 # }
-#remote state
-terraform {
-  backend "s3" {
-    bucket ="rab"
-    key ="key/terraform.tfstate"
-    encrypt = true
-    region = "us-east-1"
-  }
-}
+##remote state
+# terraform {
+#   backend "s3" {
+#     bucket ="rab"
+#     key ="key/terraform.tfstate"
+#     encrypt = true
+#     region = "us-east-1"
+#   }
+# }
 
 # data "terraform_remote_state" "remote_state" {
 #   backend = "remote"
@@ -35,9 +35,16 @@ terraform {
 # }
 module "vpc" {
   source = "./modules/vpc"
-
-  # aws_region = "${var.aws_region}"
+  environment           = var.environment
+  vpc_cidr              = var.vpc_cidr
+  public_subnets_cidr   = var.public_subnets_cidr
+  private_subnets_cidr  = var.private_subnets_cidr
+  database_subnets_cidr = var.database_subnets_cidr
+  aws_region = "${var.aws_region}"
 }
+# output "vpc_cidr" {
+#   value = module.vpc_demo.vpc_id
+# }
 
 module "securitygrp" {
   source = "./modules/securitygrp"
@@ -54,7 +61,7 @@ module "ec2" {
   aws_region = "${var.aws_region}"
   # key_pair_path = "${var.key_pair_path}"
   instance_type = "${var.instance_type}"
-  pub_subnet_1_id = "${module.vpc.out_pub_subnet_1_id}"
+  pub_subnet_id = "${module.vpc.out_pub_subnet_id}"
   #  iam_instance_profile_name = "${module.iam.out_iam_instance_profile_name}"
   #  user_data_path = "${var.user_data_path}"
   web_server_sg_id = "${module.securitygrp.out_web_server_sg_id}"
@@ -106,3 +113,4 @@ output "Nice_try" {
   value = "Keep it up"
   sensitive = false
 }
+
