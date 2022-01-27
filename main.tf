@@ -33,39 +33,39 @@
 #     }
 #   }
 # }
-module "vpc" {
-  source = "./modules/vpc"
-  environment           = var.environment
-  vpc_cidr              = var.vpc_cidr
-  public_subnets_cidr   = var.public_subnets_cidr
-  private_subnets_cidr  = var.private_subnets_cidr
-  database_subnets_cidr = var.database_subnets_cidr
-  aws_region = "${var.aws_region}"
-}
+# module "vpc" {
+#   source = "./modules/vpc"
+#   environment           = var.environment
+#   vpc_cidr              = var.vpc_cidr
+#   public_subnets_cidr   = var.public_subnets_cidr
+#   private_subnets_cidr  = var.private_subnets_cidr
+#   database_subnets_cidr = var.database_subnets_cidr
+#   aws_region = "${var.aws_region}"
+# }
 # output "vpc_cidr" {
 #   value = module.vpc_demo.vpc_id
 # }
 
-module "securitygrp" {
-  source = "./modules/securitygrp"
+# module "securitygrp" {
+#   source = "./modules/securitygrp"
 
-  vpc_id = "${module.vpc.out_vpc_id}"
-  aws_region = "${var.aws_region}"
-  vpc_cidr_block = "${module.vpc.out_vpc_cidr_block}"
-}
+#   vpc_id = "${module.vpc.out_vpc_id}"
+#   aws_region = "${var.aws_region}"
+#   vpc_cidr_block = "${module.vpc.out_vpc_cidr_block}"
+# }
 
-module "ec2" {
-  source = "./modules/ec2"
+# module "ec2" {
+#   source = "./modules/ec2"
 
-  # vpc_id = "${module.vpc.out_vpc_id}"
-  aws_region = "${var.aws_region}"
-  # key_pair_path = "${var.key_pair_path}"
-  instance_type = "${var.instance_type}"
-  pub_subnet_id = "${module.vpc.out_pub_subnet_id}"
-  #  iam_instance_profile_name = "${module.iam.out_iam_instance_profile_name}"
-  #  user_data_path = "${var.user_data_path}"
-  web_server_sg_id = "${module.securitygrp.out_web_server_sg_id}"
-}
+#   # vpc_id = "${module.vpc.out_vpc_id}"
+#   aws_region = "${var.aws_region}"
+#   # key_pair_path = "${var.key_pair_path}"
+#   instance_type = "${var.instance_type}"
+#   pub_subnet_id = "${module.vpc.out_pub_subnet_id}"
+#   #  iam_instance_profile_name = "${module.iam.out_iam_instance_profile_name}"
+#   #  user_data_path = "${var.user_data_path}"
+#   web_server_sg_id = "${module.securitygrp.out_web_server_sg_id}"
+# }
 # module "RDS" {
 #   source = "./modules/RDS" 
 
@@ -109,6 +109,9 @@ module "ec2" {
 #   etag = filemd5("F:/Git/6_aws_cloud-amit-sparsha-aashishgautam/serverless-rabindra/5.CI/build/${each.value}")
 # }
 
+module "lambda" {
+  source = "./modules/lambda" 
+}
 output "Nice_try" {
   value = "Keep it up"
   sensitive = false
