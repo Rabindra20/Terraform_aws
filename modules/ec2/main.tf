@@ -1,80 +1,77 @@
-data "aws_ami" "latest_amazon_ami" {
-  most_recent = true
 
-  filter {
-    name   = "name"
-    values = ["amzn-ami-hvm-*-*-gp2"]
+resource "aws_iam_instance_profile" "ec2" {
+  name = var.ec2_instance_name
+  role = var.ec2_role
+}
+
+resource "aws_security_group" "ec2" {
+  name        = var.ec2_security_group_name
+  description = var.ec2_security_group_description
+  vpc_id      = var.vpc_id
+  tags        = var.tags
+
+  ingress {
+    protocol    = "tcp"
+    from_port   = 0
+    to_port     = 65535
+    cidr_blocks = var.ec2_cidr_blocks
   }
 
-  filter {
-    name = "virtualization-type"
-    values = ["hvm"]
+  ingress {
+    protocol    = "ICMP"
+    from_port   = -1
+    to_port     = -1
+    cidr_blocks = ["10.200.0.0/16"]
+    description ="VPN Ping"
+  }
+	
+
+  ingress {
+    protocol    = "tcp"
+    from_port   = 22
+    to_port     = 22
+    cidr_blocks = var.is_bastion ? ["0.0.0.0/0"] : var.ec2_cidr_blocks
   }
 
-  filter {
-    name = "root-device-type"
-    values = ["ebs"]
+  ingress {
+    protocol    = "tcp"
+    from_port   = 443
+    to_port     = 443
+    cidr_blocks = ["0.0.0.0/0"]
   }
 
-  owners = ["amazon"]
+  egress {
+    protocol    = "-1"
+    from_port   = 0
+    to_port     = 0
+    cidr_blocks = ["0.0.0.0/0"]
+  }
 }
 
-# resource "aws_key_pair" "web_server_key" {
-#   key_name = "web_server_key"
-#   public_key = "${file("${var.key_pair_path}")}"
-# }
-resource "tls_private_key" "app-key" {
-  algorithm   = "RSA"
-}
-resource "aws_key_pair" "app-instance-key" {
-  key_name   = "app-key"
-  public_key = tls_private_key.app-key.public_key_openssh
-}
-
-resource "local_file" "app-key" {
-    content     = tls_private_key.app-key.private_key_pem
-    filename = "app-key.pem"
-}
-
-locals {
-  # staging_env = "staging"
-  instance_name = "${terraform.workspace}-instance" 
-}
-#================ Instance ================
-resource "aws_instance" "web_server" {
-  ami = "${data.aws_ami.latest_amazon_ami.id}"
-  instance_type = "${var.instance_type}"
-  subnet_id = "${var.pub_subnet_id}"
-  key_name = "app-key"
-  # key_name = "${aws_key_pair.web_server_key.key_name}"
-  # user_data = "${file("${var.user_data_path}")}"
-  vpc_security_group_ids = ["${var.web_server_sg_id}"]
-
+resource "aws_instance" "ec2" {
+  ami                    = var.ami_id
+  instance_type          = var.ec2_instance_type
+  key_name               = var.key_name
+  subnet_id              = var.subnet_id
+  vpc_security_group_ids = [aws_security_group.ec2.id]
+  ebs_optimized          = var.ebs_optimized
+#   user_data              = var.userdata
   tags = {
-    # Name = "Web Server"
-    # Name = "${local.staging_env}-ec2"
-    Name = local.instance_name
+    Name    = var.ec2_instance_name
+    Project = var.tags.Project
   }
-    # provisioner "file" {
-#     source      = "file.txt"
-#     destination = "file.txt"
-# }
-##local-exec
-# provisioner "local-exec" {
-#     command = "touch hello.txt"
-# }
-#remote
-# provisioner "remote-exec" {
-#     inline = [
-#       "touch hello.txt",
-#       "echo helloworld remote provisioner >> hello.txt",
-#     ]
-# }
-# connection {
-#       type        = "ssh"
-#       host        = self.public_ip
-#       private_key = file("app-key.pem")
-#       user        = "ec2-user"
-#       timeout     = "4m"
-#    }
+
+  root_block_device {
+    volume_size           = var.ec2_volume_size
+    delete_on_termination = true
+  }
+  iam_instance_profile = aws_iam_instance_profile.ec2.name
 }
+# resource "aws_eip" "elastic_ip" {
+#   tags = {
+#     Name    = var.ec2_instance_name
+#     Project = var.tags.Project
+#   }
+#   instance = aws_instance.ec2.id
+#   vpc      = true
+# }

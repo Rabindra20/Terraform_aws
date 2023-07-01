@@ -63,3 +63,27 @@ variable "my_s3_tags" {
     Environment = "dev"
   }
 }
+# variable "rds_credentials_postgres" {
+#   type = map(string)
+# }
+variable "rds_credentials_global_postgres_username" {
+  type = string
+  # default = module.global.rds_pg_username
+}
+
+variable "rds_credentials_global_postgres_password" {
+  type = string
+  # default = modules.global.rds_pg_password
+
+}
+
+variable "docdb_username" {
+  type = string
+  # default = module.global.rds_pg_username
+}
+
+variable "docdbs_password" {
+  type = string
+  # default = modules.global.rds_pg_password
+
+}

@@ -89,24 +89,6 @@
 #   asg_desired_size = "${var.asg_desired_size}"
 # }
 
-##s3 bucket
-
-# module "s3" {
-#   #path to reusable code of modules
-#   source = "./modules/s3"
-#   bucket_name = var.my_s3_bucket
-#   tags = var.my_s3_tags
-# }
-# # Upload an object
-# resource "aws_s3_bucket_object" "object" {
-
-# # If you want to upload all the files of a directory, then you need to use 'for_each' loop
-#   for_each = fileset("F:/Git/6_aws_cloud-amit-sparsha-aashishgautam/serverless-rabindra/5.CI/build/", "**")
-#   bucket = module.s3.name
-#   key    = each.value
-#   acl    = "public-read" 
-#   source = "F:/Git/6_aws_cloud-amit-sparsha-aashishgautam/serverless-rabindra/5.CI/build/${each.value}"
-#   etag = filemd5("F:/Git/6_aws_cloud-amit-sparsha-aashishgautam/serverless-rabindra/5.CI/build/${each.value}")
 # }
 
 module "lambda" {
@@ -117,3 +99,19 @@ output "Nice_try" {
   sensitive = false
 }
 
+module "label" {
+  source    = "./modules/label"
+  namespace = "demo"
+  stage     = "demo"
+  delimiter = "-"
+}
+# locals {
+#   rds_credentials_mysql = {
+#     username = var.docdb_username
+#     password = var.docdb_password
+#   }
+#   rds_credentials_postgres = {
+#     username = var.rds_credentials_global_postgres_username
+#     password = var.rds_credentials_global_postgres_password
+#   }
+# }
